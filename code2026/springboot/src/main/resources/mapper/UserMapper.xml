@@ -6,6 +6,26 @@
 
     <select id="selectAll" resultType="com.example.entity.User">
         select * from `user`
+        <where>
+            <if test="name != null">
+                name like concat('%', #{name}, '%')
+            </if>
+        </where>
     </select>
+
+    <delete id="deleteById">
+        delete from `user` where id = #{id}
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true">
+        insert into `user`(username, password, name, role, account)
+        values (#{username}, #{password}, #{name}, #{role}, #{account})
+    </insert>
+
+    <update id="updateById">
+        update `user` set username = #{username}, password = #{password},
+                          name = #{name}, role = #{role}, account = #{account}
+        where id = #{id}
+    </update>
 
 </mapper>

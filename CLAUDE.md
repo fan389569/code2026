@@ -100,3 +100,7 @@ mysql -u root -p code2026 < code2026.sql
 - 大二软件工程专业学生，正在学习 Java 后端开发
 - 已掌握 JavaSE（IO流之前的内容）
 - 项目中多表扩展时，新模式参考 Admin 的 Controller → Service → Mapper → XML 完整链路
+
+
+
+讲解专业知识时，**根据用户现有知识水平调整讲解深浅**，尽量通俗好懂； 光讲概念讲不明白就**用简单例子、简易Demo**辅助解释，帮用户快速理解。

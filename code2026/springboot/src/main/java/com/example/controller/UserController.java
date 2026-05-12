@@ -5,11 +5,7 @@ import com.example.entity.User;
 import com.example.service.UserService;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
-import net.sf.jsqlparser.statement.select.Select;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -28,8 +24,39 @@ public class UserController {
      */
     @GetMapping("/selectPage")
     public Result selectPage(@RequestParam(defaultValue = "1") Integer pageNum,
-                             @RequestParam(defaultValue = "10") Integer pageSize) {
-        PageInfo<User> pageInfo = userService.selectPage(pageNum, pageSize);
+                             @RequestParam(defaultValue = "10") Integer pageSize,
+                             @RequestParam(required = false) String name) {
+        PageInfo<User> pageInfo = userService.selectPage(pageNum, pageSize,name);
         return Result.success(pageInfo);
     }
+
+    /**
+     * 新增
+     */
+    @PostMapping("/add")
+    public Result add(@RequestBody User user) {
+        userService.add(user);
+        return Result.success();
+    }
+
+    /**
+     * 修改
+     */
+    @PutMapping("/update")
+    public Result update(@RequestBody User user) {
+        userService.updateById(user);
+        return Result.success();
+    }
+
+    /**
+     * 删除数据
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/delete/{id}")
+    public Result delete(@PathVariable Integer id) {
+        userService.deleteById(id);
+        return Result.success();
+    }
+
 }
