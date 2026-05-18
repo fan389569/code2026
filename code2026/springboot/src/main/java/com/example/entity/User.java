@@ -7,8 +7,17 @@ public class User {
     private String username;
     private String password;
     private String name;
+    private String avatar;
     private String role;
     private BigDecimal account;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public Integer getId() {
         return id;

@@ -1,6 +1,7 @@
 package com.example.service;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.example.entity.User;
 import com.example.exception.CustomException;
 import com.example.mapper.UserMapper;
@@ -9,6 +10,7 @@ import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -16,10 +18,6 @@ public class UserService {
 
     @Resource
     private UserMapper userMapper;
-
-    public void add(User user) {
-        userMapper.insert(user);
-    }
 
     public void updateById(User user) {
         userMapper.updateById(user);
@@ -39,6 +37,24 @@ public class UserService {
 
     public void deleteById(Integer id) {
         userMapper.deleteById(id);
+    }
 
+    public void add(User user){
+        String username = user.getUsername();
+        User dbUser = userMapper.selectByUsername(username);
+        if (dbUser != null){
+            throw new CustomException("新增失败！账号重复");
+        }
+
+        if (StrUtil.isBlank(user.getName())){
+            user.setName("123");
+        }
+
+        if (StrUtil.isBlank(user.getPassword())){
+            user.setPassword("123");
+        }
+        user.setRole("普通用户");
+        user.setAccount(BigDecimal.ZERO);
+        userMapper.insert(user);
     }
 }

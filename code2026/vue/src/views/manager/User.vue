@@ -8,7 +8,7 @@
 
     <div class="card" style="margin-bottom: 10px">
       <div style="margin-bottom: 10px">
-        <el-button @click="add" type="primary"> 新增</el-button>
+        <el-button @click="handleAdd" type="primary"> 新增</el-button>
       </div>
       <div>
         <el-table :data="data.tableData" stripe style="width: 100%">
@@ -18,7 +18,7 @@
           <el-table-column prop="account" label="账户余额"/>
           <el-table-column label="操作" width="180" fixed="right">
             <template #default="scope">
-              <el-button type="primary">编辑</el-button>
+              <el-button type="primary" @click="handleEdit(scope.row)">编辑</el-button>
               <el-button type="danger" @click="del(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -33,15 +33,12 @@
     </div>
 
     <el-dialog title="用户信息" v-model="data.formVisible" width="550px">
-      <el-form :model="data.form" label-width="70px" style="padding-right: 30px; padding-top: 50px">
-        <el-form-item label="账号">
+      <el-form ref="formRef" :model="data.form" :rules="data.rules" label-width="70px" style="padding-right: 30px; padding-top: 20px">
+        <el-form-item prop="username" label="账号">
           <el-input v-model="data.form.username" placeholder="请输入账号"></el-input>
         </el-form-item>
-        <el-form-item label="姓名">
+        <el-form-item prop="name" label="姓名">
           <el-input v-model="data.form.name" placeholder="请输入姓名"></el-input>
-        </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="data.form.password" placeholder="请输入密码"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -56,12 +53,12 @@
 </template>
 
 <script setup>
-import {reactive} from "vue";
+import {reactive,ref} from "vue";
 import {Search} from "@element-plus/icons-vue";
 import request from "@/utils/request";
 import {ElMessage,ElMessageBox} from "element-plus";
 
-
+const formRef = ref()
 const data = reactive({
   name: null,
   tableData: [],
@@ -69,7 +66,12 @@ const data = reactive({
   pageNum: 1,
   pageSize: 5,
   formVisible: false,
-  form: {}
+  form: {},
+  rules: {
+    username: [
+      { required: true, message: '请输入账号', trigger: 'blur' },
+    ],
+  }
 })
 
 //分页查询数据的函数
@@ -117,14 +119,23 @@ const add = () => {
   data.formVisible = true
 }
 
+const handleAdd = () => {
+  data.form = {}
+  data.formVisible = true
+}
+
 const save = () => {
-  request.post('/user/add', data.form).then(res => {
-    if (res.code === '200') {
-      ElMessage.success('操作成功')
-      data.formVisible = false
-      load()
-    } else {
-      ElMessage.error(res.msg)
+  formRef.value.validate((valid) => {  // 回调函数作为参数传入
+    if (valid) {
+      request.post('/user/add', data.form).then(res => {
+        if (res.code === '200') {
+          ElMessage.success('操作成功')
+          data.formVisible = false
+          load()
+        } else {
+          ElMessage.error(res.msg)
+        }
+      })
     }
   })
 }
